@@ -8,6 +8,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  bool _isLogin=true;
   @override
   Widget build(BuildContext context) {
     return Scaffold( 
@@ -24,6 +25,60 @@ class _AuthScreenState extends State<AuthScreen> {
 
               ),
               child: Image.asset('images/chat.png'),
+            ),
+            Card( 
+              margin: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Form(
+                    child: Column( 
+                      children: [ 
+                        TextFormField( 
+                          decoration: InputDecoration(
+                            labelText: 'Email Address',
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          autocorrect: false,
+                          textCapitalization: TextCapitalization.none,
+                        ),
+                        TextFormField( 
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                          ),
+                          obscureText: true,
+                       
+                        
+                        ),
+                        const SizedBox(height: 15,),
+                        ElevatedButton(
+                          onPressed: (){
+                            
+                          }, 
+                          child: Text(
+                           _isLogin? 'Login':'Sign Up',
+                            style: TextStyle
+                            (
+                              color: Colors.blue
+                              ),)
+                          ),
+                          TextButton(
+                            onPressed: (){
+                             setState(() {
+                               _isLogin=!_isLogin;
+                             });
+                          }, 
+                          child: Text(
+                            _isLogin? 'Creat an account':'I have already an account',
+                            style: TextStyle( 
+                              color: Colors.blue
+                            ),
+                          ))
+                        
+                      ],
+                    )),
+                  ),
+              ),
             )
           ],
         ),
