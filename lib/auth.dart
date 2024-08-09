@@ -24,6 +24,35 @@ class _AuthScreenState extends State<AuthScreen> {
 
               ),
               child: Image.asset('images/chat.png'),
+            ),
+            Card( 
+              margin: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Form(
+                    child: Column( 
+                      children: [ 
+                        TextFormField( 
+                          decoration: InputDecoration(
+                            labelText: 'Email Address',
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          autocorrect: false,
+                          textCapitalization: TextCapitalization.none,
+                        ),
+                        TextFormField( 
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                          ),
+                          obscureText: true,
+                        
+                        ),
+                        
+                      ],
+                    )),
+                  ),
+              ),
             )
           ],
         ),
