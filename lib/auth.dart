@@ -1,4 +1,9 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+final _firebase= FirebaseAuth.instance;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -9,17 +14,56 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin=true;
+  bool _isLoading=true;
   final _formKey=GlobalKey<FormState>();
   String _enteredEmail='';
   String _enterdPassword='';
-void _sumbit(){
+void _sumbit() async{
   final valid= _formKey.currentState!.validate();
-  if(valid){
-    _formKey.currentState!.save();
+  if(!valid){
+    return ;
+    
   }
+
+  // عرض مؤشر التحميل
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    if (_isLogin) {
+      log('Attempting to log in');
+      // منطق تسجيل الدخول
+    } else {
+      log('Attempting to create a new user');
+
+      final UserCredential userCredential = await _firebase.createUserWithEmailAndPassword(
+        email: _enteredEmail.trim(), 
+        password: _enterdPassword.trim(),
+      );
+
+      log('User created successfully: ${userCredential.user!.email}');
+    }
+  } on FirebaseAuthException catch (e) {
+    log('FirebaseAuthException: ${e.message}');
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.message ?? 'Authentication Failed'),
+      ),
+    );
+  } catch (e) {
+    log('General Exception: $e');
+  } finally {
+    // إخفاء مؤشر التحميل
+    setState(() {
+      _isLoading = false;
+    });
+_formKey.currentState!.save();
 
  
 
+}
 }
 
   @override
