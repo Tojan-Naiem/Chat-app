@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:chat_app/widgets/userImage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +34,12 @@ void _sumbit() async{
   try {
     if (_isLogin) {
       log('Attempting to log in');
-      // منطق تسجيل الدخول
+           final UserCredential userCredential = await _firebase.signInWithEmailAndPassword(
+        email: _enteredEmail.trim(), 
+        password: _enterdPassword.trim(),
+      );
+
+
     } else {
       log('Attempting to create a new user');
 
@@ -52,18 +58,12 @@ void _sumbit() async{
         content: Text(e.message ?? 'Authentication Failed'),
       ),
     );
-  } catch (e) {
-    log('General Exception: $e');
-  } finally {
-    // إخفاء مؤشر التحميل
-    setState(() {
-      _isLoading = false;
-    });
+  } 
 _formKey.currentState!.save();
 
  
 
-}
+
 }
 
   @override
@@ -95,6 +95,7 @@ _formKey.currentState!.save();
                       key: _formKey,
                       child: Column( 
                         children: [ 
+                         if(!_isLogin) UserImagePicker(),
                           TextFormField( 
                             decoration: InputDecoration(
                               labelText: 'Email Address',
