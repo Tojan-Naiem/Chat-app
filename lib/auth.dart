@@ -2,7 +2,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:chat_app/widgets/userImage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 final _firebase= FirebaseAuth.instance;
@@ -18,12 +20,15 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin=true;
   bool _isLoading=true;
   File? _selectedImage;
+  bool _isUploading=false;
+
   final _formKey=GlobalKey<FormState>();
   String _enteredEmail='';
   String _enterdPassword='';
+  String _enterdName='';
 void _sumbit() async{
   final valid= _formKey.currentState!.validate();
-  if(!valid){
+  if(!valid||!_isLogin&&_selectedImage==null){
     return ;
     
   }
@@ -34,6 +39,9 @@ void _sumbit() async{
   });
 
   try {
+    setState(() {
+      _isUploading=true;
+    });
     if (_isLogin) {
       log('Attempting to log in');
            final UserCredential userCredential = await _firebase.signInWithEmailAndPassword(
@@ -49,8 +57,24 @@ void _sumbit() async{
         email: _enteredEmail.trim(), 
         password: _enterdPassword.trim(),
       );
+      final storageRef=FirebaseStorage.instance
+      .ref().
+      child('user-image').
+      child('${userCredential.user!.uid}.jpg');
+      storageRef.putFile(_selectedImage!);
+      final imageURL=storageRef.getDownloadURL();
 
-      log('User created successfully: ${userCredential.user!.email}');
+      await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userCredential.user!.uid)
+      .set({
+        'name':_enterdName,
+        'email':_enteredEmail,
+        'image':_selectedImage
+
+      });
+
+
     }
   } on FirebaseAuthException catch (e) {
     log('FirebaseAuthException: ${e.message}');
@@ -62,6 +86,9 @@ void _sumbit() async{
     );
   } 
 _formKey.currentState!.save();
+setState(() {
+      _isUploading=false;
+    });
 
  
 
@@ -117,6 +144,21 @@ _formKey.currentState!.save();
                               return null;
                             },
                           ),
+                          if(!_isLogin)
+                           TextFormField( 
+                            decoration: InputDecoration(
+                              labelText: 'UserName',
+                            ),
+                            autocorrect: false,
+                            textCapitalization: TextCapitalization.none,
+                            onSaved: (newValue) => _enterdName=newValue!,
+                            validator: (value) {
+                              if(value==null||value.trim().length<3){
+                                return '';
+                              }
+                              return null;
+                            },
+                          ),
                           TextFormField( 
                             decoration: InputDecoration(
                               labelText: 'Password',
@@ -132,6 +174,8 @@ _formKey.currentState!.save();
                           
                           ),
                           const SizedBox(height: 15,),
+                          if(_isUploading)CircularProgressIndicator(),
+                          if(!_isUploading)
                           ElevatedButton(
                             style: ElevatedButton.styleFrom( 
                               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -145,6 +189,7 @@ _formKey.currentState!.save();
                               //   ),
                                 )
                             ),
+                            if(!_isUploading)
                             TextButton(
                               onPressed: (){
                                setState(() {
