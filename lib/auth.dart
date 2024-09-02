@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:chat_app/widgets/userImage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +17,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin=true;
   bool _isLoading=true;
+  File? _selectedImage;
   final _formKey=GlobalKey<FormState>();
   String _enteredEmail='';
   String _enterdPassword='';
@@ -95,7 +97,11 @@ _formKey.currentState!.save();
                       key: _formKey,
                       child: Column( 
                         children: [ 
-                         if(!_isLogin) UserImagePicker(),
+                         if(!_isLogin) UserImagePicker(
+                          onPickedImage: (File pickedImage){
+                            _selectedImage=pickedImage;
+                          }
+                          ),
                           TextFormField( 
                             decoration: InputDecoration(
                               labelText: 'Email Address',
