@@ -62,17 +62,26 @@ void _sumbit() async{
       child('user-image').
       child('${userCredential.user!.uid}.jpg');
       storageRef.putFile(_selectedImage!);
-      final imageURL=storageRef.getDownloadURL();
+      final uploadTask = await storageRef.putFile(_selectedImage!);
 
+// التحقق من نجاح الرفع
+if (uploadTask.state == TaskState.success) {
+  // الحصول على رابط التنزيل بعد نجاح الرفع
+  final imageURL = await storageRef.getDownloadURL();
+  
       await FirebaseFirestore.instance
-      .collection('users')
-      .doc(userCredential.user!.uid)
-      .set({
-        'name':_enterdName,
-        'email':_enteredEmail,
-        'image':_selectedImage
+    .collection('users')
+    .doc(userCredential.user!.uid)
+    .set({
+  'name': _enterdName,
+  'email': _enteredEmail,
+  'image': imageURL,
+});
 
-      });
+  log('Download URL: $imageURL');
+} else {
+  log('File upload failed');
+}
 
 
     }
