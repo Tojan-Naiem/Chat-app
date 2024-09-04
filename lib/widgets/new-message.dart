@@ -20,7 +20,7 @@ class _NewMessageState extends State<NewMessage> {
     String _enterdText=_messageController.text;
 
     if(_enterdText.trim().isEmpty)return;
-    
+
     _messageController.clear();
     FocusScope.of(context).unfocus();
 
@@ -32,7 +32,7 @@ class _NewMessageState extends State<NewMessage> {
       await FirebaseFirestore.instance
     .collection('chat')
     .add({
-  'name': _enterdText,
+  'text': _enterdText,
   'createdAt': Timestamp.now(),
   'userId':user.uid,
   'username':userData.data()!['name'],
