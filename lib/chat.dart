@@ -1,3 +1,5 @@
+import 'package:chat_app/widgets/chat-messages.dart';
+import 'package:chat_app/widgets/new-message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +27,14 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
       body: Center(
-        child: Text(
-          'Log In'
-        ),
+        child:Column(
+          children: [
+            Expanded(
+              child: ChatMessages(),
+              ),
+              NewMessage(),
+          ],
+        )
       ),
     );
   }
