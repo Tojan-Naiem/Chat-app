@@ -44,13 +44,16 @@ class _NewMessageState extends State<NewMessage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
+      
       padding: const EdgeInsets.only(left: 15,right: 1,bottom: 10),
       child: Row(
         children: [ 
           Expanded(
             child: TextField(
+              
               controller: _messageController,
               decoration: const InputDecoration(
+                
                 labelText:'Send a message...'
               ),
               autocorrect: true,
