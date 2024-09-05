@@ -42,11 +42,14 @@ class ChatMessages extends StatelessWidget {
           ),
           reverse: true,
           scrollDirection: Axis.vertical,
-          itemBuilder: ( context,  index) {
-            final chatMessage=loadedMessages[index].data();
-            final nextMessage=index+1<loadedMessages.length?loadedMessages[index].data():null;
+          
+           itemBuilder: (context, index) {
+             final chatMessage=loadedMessages[index].data();
+            final nextMessage=index+1<loadedMessages.length
+            ?loadedMessages[index+1].data():null;
             final currentdMessageUserId=chatMessage['userId'];
-            final nextMessageUserId=nextMessage!=null?nextMessage['userId']:null;
+            final nextMessageUserId=nextMessage!=null
+            ?nextMessage['userId']:null;
             final bool nextUserIsTheSame=currentdMessageUserId==nextMessageUserId;
             
             if(nextUserIsTheSame){
@@ -58,12 +61,13 @@ class ChatMessages extends StatelessWidget {
             else{
               return MessageBubble.first(
                 userImage: chatMessage['image'],
-                 username: chatMessage['name'],
+                 username: chatMessage['username'],
                   message: chatMessage['text'],
                  isMe: authUser.uid==currentdMessageUserId
                    );
             }
-            },
+
+}
           
         );
 

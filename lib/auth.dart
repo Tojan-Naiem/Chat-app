@@ -43,11 +43,21 @@ void _sumbit() async{
       _isUploading=true;
     });
     if (_isLogin) {
-      log('Attempting to log in');
-           final UserCredential userCredential = await _firebase.signInWithEmailAndPassword(
-        email: _enteredEmail.trim(), 
-        password: _enterdPassword.trim(),
-      );
+     try{ log('Attempting to log in');
+       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: _enteredEmail.trim(), 
+      password: _enterdPassword.trim()
+    );
+        log("User logged in successfully: ${userCredential.user?.uid}");
+} on FirebaseAuthException catch (e) {
+  if (e.code == 'user-not-found') {
+    log('No user found for that email.');
+  } else if (e.code == 'wrong-password') {
+    log('Wrong password provided for that user.');
+  } else {
+    log('Error: ${e.message}');
+  }
+}
 
 
     } else {
@@ -78,6 +88,7 @@ if (uploadTask.state == TaskState.success) {
   'image': imageURL,
 });
 
+
   log('Download URL: $imageURL');
 } else {
   log('File upload failed');
@@ -94,7 +105,10 @@ if (uploadTask.state == TaskState.success) {
       ),
     );
   } 
-_formKey.currentState!.save();
+
+if (_formKey.currentState!.validate()) {
+  _formKey.currentState!.save();
+}
 setState(() {
       _isUploading=false;
     });
